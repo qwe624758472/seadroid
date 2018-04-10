@@ -380,6 +380,13 @@ public class Utils {
         return result.toString();
     }
 
+    public static String pathJoin(String dir) {
+        if ("/".equals(dir)) {
+            return dir;
+        }
+        return dir + "/";
+    }
+
     public static String removeLastPathSeperator(String path) {
         if (TextUtils.isEmpty(path)) return null;
 
