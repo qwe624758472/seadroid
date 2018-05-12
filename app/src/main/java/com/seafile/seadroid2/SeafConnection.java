@@ -868,15 +868,20 @@ public class SeafConnection {
         builder.addFormDataPart("parent_dir", dir);
         builder.addFormDataPart("file_name", file.getName());
         builder.addFormDataPart("file_size", file.length() + "");
-        for (Block block : blocks) {
-            File blk = new File(block.path);
+        for (int i = blocks.size() - 1; i >= 0; i--) {
+            File blk = new File(blocks.get(i).path);
             builder.addFormDataPart("file", blk.getName(), RequestManager.getInstance().createProgressRequestBody(monitor, blk));
         }
 
         RequestBody body = builder.build();
         final Request request = new Request.Builder().url(link).post(body).header("Authorization", "Token " + account.token).build();
         Response execute = RequestManager.getInstance().getClient().newCall(request).execute();
-        return execute.body().string();
+        String str = execute.body().string();
+        if (!TextUtils.isEmpty(str)) {
+            return str.replace("\"", "");
+        } else {
+            throw new SeafException(SeafException.OTHER_EXCEPTION, "File upload failed");
+        }
     }
 
     public void createNewRepo(String repoName, String description, String password) throws SeafException {
